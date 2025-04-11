@@ -1,6 +1,9 @@
-import Link from "next/link";
-import Image from "next/image";
-import { auth, signOut, signIn } from "@/auth";
+import Link from 'next/link';
+import Image from 'next/image';
+import { auth, signOut, signIn } from '@/auth';
+import { BadgePlus, LogOut } from 'lucide-react';
+import { Avatar, AvatarFallback } from './ui/avatar';
+import { AvatarImage } from '@radix-ui/react-avatar';
 
 const Navbar = async () => {
   const session = await auth();
@@ -17,28 +20,38 @@ const Navbar = async () => {
             <>
               <Link href="/startup/create">
                 <span className="max-sm:hidden">Create</span>
+                <BadgePlus className="size-6 sm:hidden" size={20} />
               </Link>
 
               <form
                 action={async () => {
-                  "use server";
+                  'use server';
 
-                  await signOut({ redirectTo: "/" });
+                  await signOut({ redirectTo: '/' });
                 }}
               >
                 <button type="submit">
                   <span className="max-sm:hidden">Logout</span>
+                  <LogOut className="size-6 sm:hidden text-red-500" size={20} />
                 </button>
               </form>
 
-              <p>{session?.user?.name}</p>
+              <Link href={`/user/${session?.id}`}>
+                <Avatar className="size-10">
+                  <AvatarImage
+                    src={session?.user?.image || ''}
+                    alt={session?.user?.name || ''}
+                  />
+                  <AvatarFallback>AV</AvatarFallback>
+                </Avatar>
+              </Link>
             </>
           ) : (
             <form
               action={async () => {
-                "use server";
+                'use server';
 
-                await signIn("github");
+                await signIn('github');
               }}
             >
               <button type="submit">Login</button>
